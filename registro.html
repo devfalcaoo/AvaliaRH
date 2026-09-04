@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvaliaRH — Criar Conta</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./frontend/components/style/style.css">
+    <style>
+        body { min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg,var(--azul-escuro) 0%,#1e1060 50%,var(--roxo) 100%); }
+        .login-card { background:#fff; border-radius:20px; padding:2.5rem 2.25rem; width:100%; max-width:420px; box-shadow:0 24px 64px rgba(0,0,0,.25); animation:cardIn .4s cubic-bezier(.22,.61,.36,1) both; }
+        @keyframes cardIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+        .login-logo { text-align:center; margin-bottom:1.5rem; }
+        .login-logo .brand { font-size:1.5rem; font-weight:800; }
+        .login-logo .brand span { color:var(--roxo); }
+        .login-title { font-size:1.1rem; font-weight:700; color:var(--texto); margin-bottom:1.5rem; text-align:center; }
+        .form-group { margin-bottom:1rem; }
+        .alert-msg { border-radius:8px; padding:.65rem 1rem; font-size:.85rem; margin-bottom:1rem; display:none; }
+        .alert-erro { background:#fee2e2; border:1px solid #fca5a5; color:#dc2626; }
+        .alert-ok   { background:#dcfce7; border:1px solid #86efac; color:#16a34a; }
+        .login-footer { text-align:center; margin-top:1.25rem; font-size:.82rem; color:var(--suave); }
+        .login-footer a { color:var(--azul-medio); text-decoration:none; font-weight:600; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+
+        <div class="login-logo">
+            <div class="brand">Avalia<span>RH</span></div>
+            <p style="color:var(--suave);font-size:.875rem;margin-top:.25rem">Crie sua conta</p>
+        </div>
+
+        <div class="login-title">Novo cadastro</div>
+
+        <div class="alert-msg alert-erro" id="erroReg"></div>
+        <div class="alert-msg alert-ok"   id="okReg"></div>
+
+        <div class="form-group">
+            <label class="avalia-label">E-mail</label>
+            <input type="email" id="regEmail" class="avalia-input" placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+            <label class="avalia-label">Senha</label>
+            <input type="password" id="regSenha" class="avalia-input" placeholder="Mínimo 6 caracteres">
+        </div>
+
+        <div class="form-group">
+            <label class="avalia-label">Confirmar senha</label>
+            <input type="password" id="regSenha2" class="avalia-input" placeholder="Repita a senha">
+        </div>
+
+        <button class="btn-avalia btn-avalia-primary w-100 mt-1" onclick="registrar()" id="btnReg">
+            Criar conta
+        </button>
+
+        <div class="login-footer">
+            Já tem conta? <a href="login.html">Entrar</a>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./frontend/components/js/supabase.js"></script>
+    <script>
+
+        async function registrar() {
+            const email  = document.getElementById("regEmail").value.trim();
+            const senha  = document.getElementById("regSenha").value;
+            const senha2 = document.getElementById("regSenha2").value;
+            const erro   = document.getElementById("erroReg");
+            const ok     = document.getElementById("okReg");
+            const btn    = document.getElementById("btnReg");
+
+            erro.style.display = ok.style.display = "none";
+
+            if (!email || !senha) { mostrarErro("Preencha todos os campos."); return; }
+            if (senha.length < 6) { mostrarErro("A senha precisa ter no mínimo 6 caracteres."); return; }
+            if (senha !== senha2) { mostrarErro("As senhas não coincidem."); return; }
+
+            if (typeof sb === "undefined" || !sb?.auth) {
+                mostrarErro("Supabase não carregou. Verifique o CDN e o arquivo supabase.js.");
+                return;
+            }
+
+            btn.textContent = "Criando...";
+            btn.disabled    = true;
+
+            const { error } = await sb.auth.signUp({ email, password: senha });
+
+            if (error) {
+                mostrarErro("Erro: " + error.message);
+                btn.textContent = "Criar conta";
+                btn.disabled    = false;
+                return;
+            }
+
+            ok.textContent   = "Conta criada! Verifique seu e-mail para confirmar o cadastro.";
+            ok.style.display = "block";
+            btn.textContent  = "Conta criada ✓";
+
+            setTimeout(() => window.location.href = "login.html", 3000);
+        }
+
+        function mostrarErro(msg) {
+            const el = document.getElementById("erroReg");
+            el.textContent   = msg;
+            el.style.display = "block";
+        }
+
+        document.addEventListener("keydown", e => { if (e.key === "Enter") registrar(); });
+
+    </script>
+</body>
+</html>

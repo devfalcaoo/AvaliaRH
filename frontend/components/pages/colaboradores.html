@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AvaliaRH — Colaboradores</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../style/style.css">
+    <style>
+        .colab-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+        .colab-table thead tr { background:linear-gradient(135deg,var(--azul-escuro),var(--azul-medio)); }
+        .colab-table thead th { padding:.85rem 1rem; color:#fff; font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+        .colab-table tbody tr { border-bottom:1px solid var(--borda); transition:background .15s; }
+        .colab-table tbody tr:hover { background:var(--azul-claro); }
+        .colab-table tbody td { padding:.8rem 1rem; vertical-align:middle; }
+        .colab-wrap { border:1.5px solid var(--borda); border-radius:12px; overflow:hidden; }
+        .badge-setor { background:var(--azul-claro); color:var(--azul-medio); border-radius:20px; padding:.2rem .7rem; font-size:.75rem; font-weight:600; }
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999; align-items:center; justify-content:center; }
+        .modal-overlay.ativo { display:flex; }
+        .modal-box { background:#fff; border-radius:16px; padding:2rem; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+        .modal-titulo { font-size:1rem; font-weight:700; margin-bottom:1.25rem; color:var(--azul-escuro); }
+        .form-group { margin-bottom:.85rem; }
+        .sem-dados { text-align:center; color:var(--suave); font-style:italic; padding:2rem; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="avalia-header">
+        <div class="header-inner">
+            <img src="../../assets/img/logo-sem-fundo.png" alt="AvaliaRH" class="header-logo" onerror="this.style.display='none'">
+            <div class="header-subtitle">Colaboradores</div>
+            <a href="../../../index.html" class="btn-dash ms-auto">
+                <i class="bi bi-arrow-left"></i> Avaliações
+            </a>
+            <button class="btn-avalia btn-avalia-ghost ms-2" style="font-size:.82rem;padding:.35rem .85rem" onclick="fazerLogout()">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
+        </div>
+    </header>
+
+    <main class="avalia-main">
+        <div class="avalia-container">
+            <div class="avalia-card">
+                <section class="avalia-section">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div class="section-title mb-0">👥 Colaboradores Cadastrados</div>
+                        <button class="btn-avalia btn-avalia-primary" style="font-size:.85rem;padding:.55rem 1.2rem" onclick="abrirModal()">
+                            + Novo Colaborador
+                        </button>
+                    </div>
+
+                    <!-- TABELA -->
+                    <div class="colab-wrap">
+                        <table class="colab-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Cargo</th>
+                                    <th>Setor</th>
+                                    <th style="text-align:center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaColabs">
+                                <tr><td colspan="5" class="sem-dados">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="avalia-footer">AvaliaRH © 2026 — Desenvolvido por Falcão</footer>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalColab">
+        <div class="modal-box">
+            <div class="modal-titulo" id="modalTitulo">Novo Colaborador</div>
+            <input type="hidden" id="colabId">
+            <div class="form-group">
+                <label class="avalia-label">Nome completo</label>
+                <input type="text" id="colabNome" class="avalia-input" placeholder="Nome Sobrenome">
+            </div>
+            <div class="form-group">
+                <label class="avalia-label">E-mail</label>
+                <input type="email" id="colabEmail" class="avalia-input" placeholder="email@empresa.com">
+            </div>
+            <div class="row g-2">
+                <div class="col-6 form-group">
+                    <label class="avalia-label">Cargo</label>
+                    <input type="text" id="colabCargo" class="avalia-input" placeholder="Ex: Analista">
+                </div>
+                <div class="col-6 form-group">
+                    <label class="avalia-label">Setor</label>
+                    <input type="text" id="colabSetor" class="avalia-input" placeholder="Ex: RH">
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button class="btn-avalia btn-avalia-ghost" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-avalia btn-avalia-primary" onclick="salvar()" id="btnSalvarColab">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/db.js"></script>
+    <script>
+
+        // Protege a página
+        (async () => { await protegerPagina(); await carregar(); })();
+
+        async function carregar() {
+            const tbody = document.getElementById("tabelaColabs");
+            try {
+                const lista = await listarColaboradores();
+                if (!lista.length) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="sem-dados">Nenhum colaborador cadastrado ainda.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = lista.map(c => `
+                    <tr>
+                        <td><strong>${c.nome}</strong></td>
+                        <td style="color:var(--suave)">${c.email}</td>
+                        <td>${c.cargo || "—"}</td>
+                        <td>${c.setor ? `<span class="badge-setor">${c.setor}</span>` : "—"}</td>
+                        <td style="text-align:center">
+                            <button class="btn-remove" style="margin:0 auto;border-color:#c0c9ff;color:var(--azul-medio)" onclick="editar('${c.id}','${esc(c.nome)}','${esc(c.email)}','${esc(c.cargo||'')}','${esc(c.setor||'')}')">✏ Editar</button>
+                            <button class="btn-remove ms-1" onclick="excluir('${c.id}')">🗑</button>
+                        </td>
+                    </tr>`).join("");
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="5" class="sem-dados">Erro ao carregar: ${e.message}</td></tr>`;
+            }
+        }
+
+        function esc(s) { return (s||"").replace(/'/g,"\\'"); }
+
+        function abrirModal(id="", nome="", email="", cargo="", setor="") {
+            document.getElementById("colabId").value    = id;
+            document.getElementById("colabNome").value  = nome;
+            document.getElementById("colabEmail").value = email;
+            document.getElementById("colabCargo").value = cargo;
+            document.getElementById("colabSetor").value = setor;
+            document.getElementById("modalTitulo").textContent = id ? "Editar Colaborador" : "Novo Colaborador";
+            document.getElementById("modalColab").classList.add("ativo");
+        }
+
+        function fecharModal() { document.getElementById("modalColab").classList.remove("ativo"); }
+
+        function editar(id, nome, email, cargo, setor) { abrirModal(id, nome, email, cargo, setor); }
+
+        async function salvar() {
+            const id    = document.getElementById("colabId").value;
+            const dados = {
+                nome:  document.getElementById("colabNome").value.trim(),
+                email: document.getElementById("colabEmail").value.trim(),
+                cargo: document.getElementById("colabCargo").value.trim(),
+                setor: document.getElementById("colabSetor").value.trim()
+            };
+            if (!dados.nome || !dados.email) { alert("Nome e e-mail são obrigatórios."); return; }
+            const btn = document.getElementById("btnSalvarColab");
+            btn.textContent = "Salvando..."; btn.disabled = true;
+            try {
+                if (id) await editarColaborador(id, dados);
+                else    await salvarColaborador(dados);
+                fecharModal(); await carregar();
+            } catch(e) { alert("Erro: " + e.message); }
+            btn.textContent = "Salvar"; btn.disabled = false;
+        }
+
+        async function excluir(id) {
+            if (!confirm("Excluir este colaborador?")) return;
+            try { await excluirColaborador(id); await carregar(); }
+            catch(e) { alert("Erro: " + e.message); }
+        }
+
+    </script>
+</body>
+</html>

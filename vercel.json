@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/index.js",    "use": "@vercel/node" },
+    { "src": "index.html",      "use": "@vercel/static" },
+    { "src": "login.html",      "use": "@vercel/static" },
+    { "src": "registro.html",   "use": "@vercel/static" },
+    { "src": "frontend/**",     "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "src": "/login",          "dest": "/login.html" },
+    { "src": "/registro",       "dest": "/registro.html" },
+    { "src": "/frontend/(.*)",  "dest": "/frontend/$1" },
+    { "src": "/",               "dest": "/login.html" },
+    { "src": "/(.*)",           "dest": "/$1" }
+  ]
+}

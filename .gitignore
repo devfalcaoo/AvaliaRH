@@ -1,0 +1,58 @@
+# Dependências Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Chaves/certificados
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+
+# Builds e arquivos gerados
+dist/
+build/
+coverage/
+.cache/
+.parcel-cache/
+.vite/
+
+# Relatórios gerados localmente
+*.pdf
+
+# Dados locais do navegador/aplicação
+# (mantido apenas como regra de prevenção para arquivos exportados)
+local-storage/
+data/

@@ -1,0 +1,46 @@
+/* =========================================================
+   SININHO DE NOTIFICAÇÕES
+========================================================= */
+
+/* Botão do sininho */
+.btn-notificacao {
+    border: 0;
+    background: transparent;
+    color: #ffff;
+    padding: 8px;
+}
+
+.btn-notificacao:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Menu */
+.notificacoes-menu {
+    width: 350px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Itens */
+.notificacao-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.notificacao-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Indicador de novas notificações */
+.notificacao-badge {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 576px) {
+    .notificacoes-menu {
+        width: 300px;
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "avaliarh",
+  "version": "1.0.0",
+  "description": "Sistema de Avaliação de Competências com feedback por IA",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
