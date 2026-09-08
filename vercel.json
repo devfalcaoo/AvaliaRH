@@ -5,12 +5,16 @@
     { "src": "index.html",      "use": "@vercel/static" },
     { "src": "login.html",      "use": "@vercel/static" },
     { "src": "registro.html",   "use": "@vercel/static" },
+    { "src": "esqueci-senha.html",   "use": "@vercel/static" },
+    { "src": "redefinir-senha.html", "use": "@vercel/static" },
     { "src": "frontend/**",     "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" },
     { "src": "/login",          "dest": "/login.html" },
     { "src": "/registro",       "dest": "/registro.html" },
+    { "src": "/esqueci-senha",       "dest": "/esqueci-senha.html" },
+    { "src": "/redefinir-senha",     "dest": "/redefinir-senha.html" },
     { "src": "/frontend/(.*)",  "dest": "/frontend/$1" },
     { "src": "/",               "dest": "/login.html" },
     { "src": "/(.*)",           "dest": "/$1" }
